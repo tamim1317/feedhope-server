@@ -1,27 +1,27 @@
-const admin = require('../firebaseAdmin');
+const admin = require('../firebaseAdmin'); // Import the initialized admin SDK
 
 const verifyToken = async (req, res, next) => {
-    // Check for Authorization header
-    const tokenHeader = req.headers.authorization;
-
-    if (!tokenHeader || !tokenHeader.startsWith('Bearer ')) {
-        return res.status(401).send({ message: 'Unauthorized: No token provided.' });
+    // 1. Check for the Authorization header
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ message: 'Unauthorized: No token provided.' });
     }
 
- const idToken = tokenHeader.split(' ')[1];
+    // 2. Extract the token
+    const token = authHeader.split(' ')[1];
 
     try {
-        // Verify the token using Firebase Admin SDK
-        const decodedToken = await admin.auth().verifyIdToken(idToken);
+        // 3. Verify the token using Firebase Admin SDK
+        const decodedToken = await admin.auth().verifyIdToken(token);
         
-        // UID, email.. to the request object
+        // 4. Attach the decoded user data (UID, email, etc.) to the request object
         req.user = decodedToken;
         
+        // 5. Continue to the route handler
         next();
     } catch (error) {
-        console.error('Error verifying token:', error);
-        // Handle common errors
-        return res.status(401).send({ message: 'Unauthorized: Invalid or expired token.' });
+        console.error('Token verification failed:', error);
+        return res.status(403).json({ message: 'Forbidden: Invalid or expired token.' });
     }
 };
 
