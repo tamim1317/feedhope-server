@@ -15,13 +15,15 @@ app.use(express.json());
 
 // ✅ CORS configuration
 const allowedOrigins = [
-  "*"
-  // "https://feedhope-client.vercel.app", // production frontend
-  // "http://localhost:5173",             // development frontend
+  // "*"
+  "https://feedhope-client.vercel.app", // production frontend
+  "http://localhost:5173",             // development frontend
+  "https://feedhope-authentication.web.app/",// firebase url
+  "https://feedhopebd.netlify.app/" // netlify url
 ];
 
 app.use(cors({
-  origin: function(origin, callback) {
+  origin: function (origin, callback) {
     // allow requests with no origin (like Postman)
     if (!origin) return callback(null, true);
     if (allowedOrigins.indexOf(origin) === -1) {
