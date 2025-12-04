@@ -13,31 +13,34 @@ const app = express();
 // Middleware
 app.use(express.json());
 
-// ✅ CORS configuration
+//  CORS configuration
+
 const allowedOrigins = [
-  // "*"
-  "https://feedhope-client.vercel.app", // production frontend
-  "http://localhost:5173",             // development frontend
-  "https://feedhope-authentication.web.app/",// firebase url
-  "https://feedhopebd.netlify.app/" // netlify url
+  "http://localhost:5173",                  // local dev
+  "https://feedhope-client.vercel.app",     // production frontend
+  "https://feedhope-authentication.web.app",// firebase hosting
+  "https://feedhopebd.netlify.app",         // netlify frontend
 ];
 
 app.use(cors({
-  origin: function (origin, callback) {
-    // allow requests with no origin (like Postman)
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.indexOf(origin) === -1) {
-      const msg = "The CORS policy for this site does not allow access from the specified Origin.";
-      return callback(new Error(msg), false);
+  origin: function(origin, callback) {
+    if (!origin) return callback(null, true); // allow Postman, mobile apps, curl
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("CORS Error: Origin not allowed"));
     }
-    return callback(null, true);
   },
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
 }));
-
 // Handle preflight OPTIONS requests
-app.options("*", cors());
+// app.options("*", cors());
+app.use(cors({
+  origin: "*",
+  credentials: true,
+}));
+
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI)
