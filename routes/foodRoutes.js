@@ -3,19 +3,15 @@ import { getFoods, getMyFoods, addFood, updateFood, deleteFood } from "../contro
 
 const router = express.Router();
 
-// Router-level CORS
-router.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "https://feedhope-client.vercel.app");
-  res.header("Access-Control-Allow-Credentials", "true");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  if (req.method === "OPTIONS") return res.sendStatus(200);
-  next();
-});
+// No need for router-level CORS anymore (handled globally in index.js)
 
-router.get("/", getFoods);
-router.get("/my-foods", getMyFoods);
-router.post("/", addFood);
-router.put("/:id", updateFood);
-router.delete("/:id", deleteFood);
+// Public Routes
+router.get("/", getFoods);                    // Get all foods
+router.get("/my-foods", getMyFoods);          // Get user's foods
+
+// Protected Routes
+router.post("/", addFood);                    // Add new food
+router.put("/:id", updateFood);               // Update food
+router.delete("/:id", deleteFood);            // Delete food
 
 export default router;
