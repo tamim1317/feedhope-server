@@ -9,6 +9,7 @@ import verifyToken from "../middleware/verifyToken.js";
 
 const router = express.Router();
 
+// All routes are protected with verifyToken middleware
 router.post('/', verifyToken, submitRequest);
 router.get('/my-requests', verifyToken, getMyRequests);
 router.get('/food/:foodId', verifyToken, getRequestsForMyFood);
